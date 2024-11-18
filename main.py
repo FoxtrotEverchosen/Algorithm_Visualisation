@@ -19,8 +19,6 @@ FONT = pygame.freetype.SysFont('arial', 50)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Path finding visualization")
 
-print(f"{ROWS=}, {COLS=}, {SQUARE_SIZE_X=}, {SQUARE_SIZE_Y=}")
-
 
 def draw_maze(board: list[list[str]]) -> None:
     """
@@ -38,12 +36,24 @@ def draw_maze(board: list[list[str]]) -> None:
 
     for i, row in enumerate(board):
         for j, col in enumerate(row):
-            # TODO: change hardcoded value to dynamic (70 is square size X/Y, 20 is a random offset)
             FONT.render_to(WIN, (j*70+20, i*70+20), col, DARK_GRAY)
 
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 100)
+
+
+def draw_rect(path: list, color: tuple) -> None:
+    """
+    Draws rectangles on the grid to mark walked path.
+    :param path: list of tuples containing coordinates of maze nodes to be drawn
+    :param color: color of the rectangles provided as a tuple of RGB color value
+    :return: None
+    """
+    i, j = path[0]
+    rect = pygame.Rect(j * 70 + 10, i * 70 + 10, SQUARE_SIZE_X - 20, SQUARE_SIZE_Y - 20)
+    pygame.draw.rect(WIN, color, rect)
+    path.pop(0)
 
 
 def main():
@@ -60,15 +70,9 @@ def main():
                 run = False
             if event.type == SCREEN_UPDATE:
                 if len(visited) != 0:
-                    i, j = visited[0]
-                    rect = pygame.Rect(j * 70 + 10, i * 70 + 10, SQUARE_SIZE_X - 20, SQUARE_SIZE_Y - 20)
-                    pygame.draw.rect(WIN, GREEN, rect)
-                    visited.pop(0)
+                    draw_rect(visited, GREEN)
                 elif len(path) != 0:
-                    i, j = path[0]
-                    rect = pygame.Rect(j * 70 + 10, i * 70 + 10, SQUARE_SIZE_X - 20, SQUARE_SIZE_Y - 20)
-                    pygame.draw.rect(WIN, RED, rect)
-                    path.pop(0)
+                    draw_rect(path, RED)
 
         pygame.display.flip()
     pygame.quit()
