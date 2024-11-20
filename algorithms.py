@@ -19,12 +19,10 @@ class Utilities:
                 if value == symbol:
                     return i, j
 
-
-class BFS:
     @staticmethod
     def find_neighbours(row: int, col: int, board: list[list[str]]) -> list[tuple[int, int]]:
         """
-        For a given node of a graph generates a list of its neighbours saved as tuples of their coordinates in graph
+        For a given node of a graph generate a list of its neighbours, saved as tuples of their coordinates in graph
         :param row: row of the current node
         :param col: col of the current node
         :param board: graph consisting the node
@@ -43,39 +41,39 @@ class BFS:
 
         return neighbours
 
-    @staticmethod
-    def breadth_first(board: list[list[str]]) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
-        """
-        Finds the shortest path to the exit using breadth-first search algorithm.
-        :param board: takes a maze written as a 2D list.
-        :return: (Path, Visited) Path - a list containing tuples with positions of nodes of the shortest path and Visited -
-                list of visited nodes
-        """
-        end = "X"
-        start = Utilities.find_start_pos(board)
-        visited = [start]
-        q = queue.Queue()
-        q.put((start, [start]))
 
-        while not q.empty():
-            current, path = q.get()
-            row, col = current
+def bfs(board: list[list[str]]) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    """
+    Finds the shortest path to the exit using breadth-first search algorithm.
+    :param board: takes a maze written as a 2D list.
+    :return: (Path, Visited) Path - a list containing tuples with positions of nodes of the shortest path and Visited -
+            list of visited nodes
+    """
+    end = "X"
+    start = Utilities.find_start_pos(board)
+    visited = [start]
+    q = queue.Queue()
+    q.put((start, [start]))
 
-            if board[row][col] == end:
-                visited.append((row, col))
-                return path, visited
+    while not q.empty():
+        current, path = q.get()
+        row, col = current
 
-            if (row, col) not in visited:
-                visited.append((row, col))
+        if board[row][col] == end:
+            visited.append((row, col))
+            return path, visited
 
-            neighbours = BFS.find_neighbours(row, col, board)
-            for neighbour in neighbours:
+        if (row, col) not in visited:
+            visited.append((row, col))
 
-                r, c = neighbour
-                if neighbour in visited:
-                    continue
-                if board[r][c] == "#":
-                    continue
+        neighbours = Utilities.find_neighbours(row, col, board)
+        for neighbour in neighbours:
+            r, c = neighbour
+            if neighbour in visited:
+                continue
+            if board[r][c] == "#":
+                continue
 
-                new_path = path + [neighbour]
-                q.put((neighbour, new_path))
+            new_path = path + [neighbour]
+            q.put((neighbour, new_path))
+ 

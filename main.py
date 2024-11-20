@@ -1,6 +1,6 @@
 import pygame
 import pygame.freetype
-from algorithms import BFS
+from algorithms import bfs
 from maze_board import maze
 pygame.init()
 
@@ -59,7 +59,7 @@ def draw_rect(path: list, color: tuple) -> None:
 def main():
     run = True
     clock = pygame.time.Clock()
-    path, visited = BFS.breadth_first(maze)
+    path, visited = bfs(maze)
     draw_maze(board=maze)
 
     while run:
