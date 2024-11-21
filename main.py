@@ -13,8 +13,10 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 GRAY = (120, 120, 120)
 DARK_GRAY = (40, 40, 40)
+WHITE = (255, 255, 255)
 FPS = 60
 FONT = pygame.freetype.SysFont('arial', 50)
+TEXT_BOX_WIDTH, TEXT_BOX_HEIGHT = 300, 80
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Path finding visualization")
@@ -56,23 +58,52 @@ def draw_rect(path: list, color: tuple) -> None:
     path.pop(0)
 
 
+def draw_buttons(num: int, names: list) -> None:
+    """
+    Draws selected number of buttons on the screen. current max=5
+    :param num: how many buttons to draw
+    :param names: list containing text to be drawn on the buttons
+    :return: None
+    """
+    margin = 100
+    padding = 40
+
+    for i in range(num):
+        x = (WIDTH - TEXT_BOX_WIDTH)/2
+        y = margin + i * (TEXT_BOX_HEIGHT + padding)
+        pygame.draw.rect(WIN, DARK_GRAY, [x, y, TEXT_BOX_WIDTH, TEXT_BOX_HEIGHT])
+        FONT.render_to(WIN, ((WIDTH - TEXT_BOX_WIDTH)/2 + 10, margin + (i * (TEXT_BOX_HEIGHT + padding)+TEXT_BOX_HEIGHT/4)), names[i], WHITE)
+
+
 def main():
     run = True
     clock = pygame.time.Clock()
-    path, visited = bfs(maze)
-    draw_maze(board=maze)
+    WIN.fill(GRAY)
+    draw_buttons(5, ["BFS", "N/A", "N/A", "N/A", "N/A"])
 
+    maze_run = False
     while run:
         clock.tick(FPS)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == SCREEN_UPDATE:
-                if len(visited) != 0:
-                    draw_rect(visited, GREEN)
-                elif len(path) != 0:
-                    draw_rect(path, RED)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and not maze_run:
+                mouse = pygame.mouse.get_pos()
+                # if BFS chosen:
+                if (((WIDTH - TEXT_BOX_WIDTH)/2 <= mouse[0] <= WIDTH/2 + TEXT_BOX_WIDTH/2) and
+                        (100 <= mouse[1] <= 100 + TEXT_BOX_HEIGHT)):
+                    draw_maze(board=maze)
+                    path, visited = bfs(maze)
+                    maze_run = True
+
+            if maze_run:
+                if event.type == SCREEN_UPDATE:
+                    if len(visited) != 0:
+                        draw_rect(visited, GREEN)
+                    elif len(path) != 0:
+                        draw_rect(path, RED)
 
         pygame.display.flip()
     pygame.quit()

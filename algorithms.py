@@ -76,4 +76,7 @@ def bfs(board: list[list[str]]) -> tuple[list[tuple[int, int]], list[tuple[int, 
 
             new_path = path + [neighbour]
             q.put((neighbour, new_path))
- 
+
+
+def sudoku_solver():
+    pass
