@@ -41,10 +41,6 @@ def draw_maze(board: list[list[str]]) -> None:
             FONT.render_to(WIN, (j*70+20, i*70+20), col, DARK_GRAY)
 
 
-SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 100)
-
-
 def draw_rect(path: list, color: tuple) -> None:
     """
     Draws rectangles on the grid to mark walked path.
@@ -75,35 +71,33 @@ def draw_buttons(num: int, names: list) -> None:
         FONT.render_to(WIN, ((WIDTH - TEXT_BOX_WIDTH)/2 + 10, margin + (i * (TEXT_BOX_HEIGHT + padding)+TEXT_BOX_HEIGHT/4)), names[i], WHITE)
 
 
+# change screen update rate
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE, 300)
+
+
+# GIU
 def main():
     run = True
     clock = pygame.time.Clock()
     WIN.fill(GRAY)
     draw_buttons(5, ["BFS", "N/A", "N/A", "N/A", "N/A"])
 
-    maze_run = False
+    draw_maze(board=maze)
+    path, visited = bfs(maze)
+
     while run:
         clock.tick(FPS)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN and not maze_run:
-                mouse = pygame.mouse.get_pos()
-                # if BFS chosen:
-                if (((WIDTH - TEXT_BOX_WIDTH)/2 <= mouse[0] <= WIDTH/2 + TEXT_BOX_WIDTH/2) and
-                        (100 <= mouse[1] <= 100 + TEXT_BOX_HEIGHT)):
-                    draw_maze(board=maze)
-                    path, visited = bfs(maze)
-                    maze_run = True
-
-            if maze_run:
-                if event.type == SCREEN_UPDATE:
-                    if len(visited) != 0:
-                        draw_rect(visited, GREEN)
-                    elif len(path) != 0:
-                        draw_rect(path, RED)
+            if event.type == SCREEN_UPDATE:
+                if len(visited) != 0:
+                    draw_rect(visited, GREEN)
+                elif len(path) != 0:
+                    pygame.time.set_timer(SCREEN_UPDATE, 100)
+                    draw_rect(path, RED)
 
         pygame.display.flip()
     pygame.quit()

@@ -19,6 +19,8 @@ class Utilities:
                 if value == symbol:
                     return i, j
 
+        raise Exception("No starting symbol found")
+
     @staticmethod
     def find_neighbours(row: int, col: int, board: list[list[str]]) -> list[tuple[int, int]]:
         """
@@ -76,7 +78,3 @@ def bfs(board: list[list[str]]) -> tuple[list[tuple[int, int]], list[tuple[int, 
 
             new_path = path + [neighbour]
             q.put((neighbour, new_path))
-
-
-def sudoku_solver():
-    pass
